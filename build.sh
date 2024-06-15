@@ -1,6 +1,44 @@
 #!/bin/bash
 
+# Ensure the script exits on error
+set -e
+
 TARGET_DEVICE=$1
+
+if [ -z "$1" ]; then
+    echo "Error: No argument provided, please specific a target device." 
+    echo "If you need KernelSU, please add [ksu] as the second arg."
+    echo "Examples:"
+    echo "Build for lmi(K30 Pro/POCO F2 Pro) without KernelSU:"
+    echo "    bash -e build.sh lmi"
+    echo "Build for umi(Mi10) with KernelSU:"
+    echo "    bash -e build.sh umi ksu"
+    exit 1
+fi
+
+if ! command -v aarch64-linux-android-ld >/dev/null 2>&1; then
+    echo "[aarch64-linux-android-ld] does not exist, please check your environment."
+    exit 1
+fi
+
+if ! command -v clang >/dev/null 2>&1; then
+    echo "[clang] does not exist, please check your environment."
+    exit 1
+fi
+
+
+if [ ! -f "arch/arm64/configs/${TARGET_DEVICE}_defconfig" ]; then
+    echo "No target device [${TARGET_DEVICE}] found."
+    echo "Avaliable defconfigs, please choose one target from below down:"
+    ls arch/arm64/configs/*_defconfig
+    exit 1
+fi
+
+
+# Check clang is existing.
+clang --version
+
+
 
 KSU_ZIP_STR=NoKernelSU
 if [ "$2" == "ksu" ]; then
@@ -35,6 +73,8 @@ make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
 
 if [ $KSU_ENABLE -eq 1 ]; then
     scripts/config --file out/.config -e KSU
+else
+    scripts/config --file out/.config -d KSU
 fi
 
 make $MAKE_ARGS -j$(nproc)
@@ -71,6 +111,9 @@ echo "Clearning [out/] and build for MIUI....."
 rm -rf out/
 
 dts_source=arch/arm64/boot/dts/vendor/qcom
+
+# Backup dts
+cp -a ${dts_source} ./.dts.bak
 
 # Correct panel dimensions on MIUI builds
 sed -i 's/<154>/<1537>/g' ${dts_source}/dsi-panel-j1s*
@@ -130,7 +173,10 @@ make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
 
 if [ $KSU_ENABLE -eq 1 ]; then
     scripts/config --file out/.config -e KSU
+else
+    scripts/config --file out/.config -d KSU
 fi
+
 
 scripts/config --file out/.config \
     --set-str STATIC_USERMODEHELPER_PATH /system/bin/micd \
@@ -171,13 +217,22 @@ else
     exit 1
 fi
 
+
+# Restore modified dts
+rm -rf ${dts_source}
+mv ./.dts.bak ${dts_source}
+
+echo "Generating [out/arch/arm64/boot/dtb]......"
+find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
+
+
 mkdir -p anykernel/kernels/miui
 cp out/arch/arm64/boot/Image anykernel/kernels/miui
 cp out/arch/arm64/boot/dtb anykernel/kernels/miui
 
 cd anykernel 
 
-ZIP_FILENAME=Kernel_${TARGET_DEVICE}_$(KSU_ZIP_STR)_$(date +'%Y%m%d_%H%M%S')_anykernel3.zip
+ZIP_FILENAME=Kernel_${TARGET_DEVICE}_${KSU_ZIP_STR}_$(date +'%Y%m%d_%H%M%S')_anykernel3.zip
 
 zip -r9 $ZIP_FILENAME ./* -x .git .gitignore out/ ./*.zip
 
@@ -185,4 +240,4 @@ mv $ZIP_FILENAME ../
 
 cd ..
 
-echo "Done. The flashable zip is: $ZIP_FILENAME"
+echo "Done. The flashable zip is: ./$ZIP_FILENAME"
