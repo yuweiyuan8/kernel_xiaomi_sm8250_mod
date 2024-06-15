@@ -67,6 +67,10 @@ echo "Cleaning..."
 rm -rf out/
 rm -rf anykernel/
 
+echo "Clone AnyKernel3 for packing kernel (repo: https://github.com/liyafe1997/AnyKernel3)"
+git clone https://github.com/liyafe1997/AnyKernel3 -b kona --single-branch --depth=1 anykernel
+
+# ------------- Building for AOSP -------------
 
 echo "Building for AOSP......"
 make $MAKE_ARGS ${TARGET_DEVICE}_defconfig
@@ -91,9 +95,6 @@ echo "Generating [out/arch/arm64/boot/dtb]......"
 find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
 
 
-echo "Packing Kernel with AnyKernel3 (repo: https://github.com/liyafe1997/AnyKernel3)"
-git clone https://github.com/liyafe1997/AnyKernel3 -b kona --single-branch --depth=1 anykernel
-
 rm -rf anykernel/kernels/miui
 rm -rf anykernel/kernels/aosp
 rm -rf anykernel/kernels/aospa
@@ -105,6 +106,14 @@ cp out/arch/arm64/boot/Image anykernel/kernels/aosp
 cp out/arch/arm64/boot/dtb anykernel/kernels/aosp
 cp out/arch/arm64/boot/Image anykernel/kernels/aospa
 cp out/arch/arm64/boot/dtb anykernel/kernels/aospa
+
+echo "Build for AOSP finished."
+
+# ------------- End of Building for AOSP -------------
+#  If you don't need AOSP you can comment out the above block [Building for AOSP]
+
+
+# ------------- Building for MIUI -------------
 
 
 echo "Clearning [out/] and build for MIUI....."
@@ -218,17 +227,22 @@ else
 fi
 
 
+echo "Generating [out/arch/arm64/boot/dtb]......"
+find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
+
 # Restore modified dts
 rm -rf ${dts_source}
 mv ./.dts.bak ${dts_source}
-
-echo "Generating [out/arch/arm64/boot/dtb]......"
-find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
 
 
 mkdir -p anykernel/kernels/miui
 cp out/arch/arm64/boot/Image anykernel/kernels/miui
 cp out/arch/arm64/boot/dtb anykernel/kernels/miui
+
+echo "Build for MIUI finished."
+# ------------- End of Building for MIUI -------------
+#  If you don't need MIUI you can comment out the above block [Building for MIUI]
+
 
 cd anykernel 
 
