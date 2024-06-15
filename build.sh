@@ -252,8 +252,6 @@ ZIP_FILENAME=Kernel_${TARGET_DEVICE}_${KSU_ZIP_STR}_$(date +'%Y%m%d_%H%M%S')_any
 
 zip -r9 $ZIP_FILENAME ./* -x .git .gitignore out/ ./*.zip
 
-mv $ZIP_FILENAME ../
-
 cd ..
 
-echo "Done. The flashable zip is: ./$ZIP_FILENAME"
+echo "Done. The flashable zip is: [anykernel/$ZIP_FILENAME]"
