@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Some logics of this script are copied from [scripts/build_kernel]. Thanks to UtsavBalar1231.
+
 # Ensure the script exits on error
 set -e
 
@@ -122,7 +124,7 @@ rm -rf out/
 dts_source=arch/arm64/boot/dts/vendor/qcom
 
 # Backup dts
-cp -a ${dts_source} ./.dts.bak
+cp -a ${dts_source} .dts.bak
 
 # Correct panel dimensions on MIUI builds
 sed -i 's/<154>/<1537>/g' ${dts_source}/dsi-panel-j1s*
@@ -232,7 +234,7 @@ find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/d
 
 # Restore modified dts
 rm -rf ${dts_source}
-mv ./.dts.bak ${dts_source}
+mv .dts.bak ${dts_source}
 
 
 mkdir -p anykernel/kernels/miui
