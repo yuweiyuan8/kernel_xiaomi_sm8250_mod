@@ -10,9 +10,9 @@ if [ -z "$1" ]; then
     echo "If you need KernelSU, please add [ksu] as the second arg."
     echo "Examples:"
     echo "Build for lmi(K30 Pro/POCO F2 Pro) without KernelSU:"
-    echo "    bash -e build.sh lmi"
+    echo "    bash build.sh lmi"
     echo "Build for umi(Mi10) with KernelSU:"
-    echo "    bash -e build.sh umi ksu"
+    echo "    bash build.sh umi ksu"
     exit 1
 fi
 
