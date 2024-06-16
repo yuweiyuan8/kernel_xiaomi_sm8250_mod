@@ -17,9 +17,19 @@ Note: The zip does not include the `dtbo.img` and it will not replace your `dtbo
 注意：该内核的zip包不包含`dtbo.img`，并且不会刷你的dtbo分区。推荐使用原厂的`dtbo`，或者来自第三方系统包自带的dtbo（如果原作者确认那好用的话）。因为该源码build出来的`dtbo.img`有些小问题，比如在锁屏界面上尝试熄屏时，屏幕会突然闪一下到最高亮度。如果你刷过其它第三方内核，或者遇到一些奇怪的问题，建议检查一下你的`dtbo`是否被替换过。
 
 # How to build
-1. Prepair basic build environment. 
-    You have to have the basic common toolchains, like `git`, `make`, `curl`, etc. 
-    In Debian/Ubuntu, you can just `sudo apt install build-essential`, In RHEL/RPM based OS, you can `sudo yum groupinstall 'Development Tools'`.
+1. Prepair the basic build environment. 
+    You have to have the basic common toolchains, such as `git`, `make`, `curl`, `bison`, `flex`, `zip`, etc, and some other packages.
+    In Debian/Ubuntu, you can
+    ```
+    sudo apt install build-essential git curl wget bison flex zip bc cpio libssl-dev
+    ```
+    And also, you have to have `python` (only `python3` is not enough). you can install the apt package `python-is-python3`.
+
+    In RHEL/RPM based OS, you can
+    ```
+    sudo yum groupinstall 'Development Tools'
+    sudo yum install wget bc openssl-devel
+    ```
 
 2. Download compiler from Google
     You have to have `aarch64-linux-android`, `arm-linux-androideabi`, `clang`. They are avaliable in these repository:
