@@ -45,7 +45,7 @@ Note: The zip does not include the `dtbo.img` and it will not replace your `dtbo
     cd ..
 
     mkdir clang-android
-    cd clang-androids
+    cd clang-android
     wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/android12-gsi.tar.gz
     tar xvf android12-gsi.tar.gz
     cd ..
