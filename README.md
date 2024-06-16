@@ -7,7 +7,7 @@ This focked branch and the pre-built kernel image/zip is based on the `android12
 
 Note: The zip does not include the `dtbo.img` and it will not replace your `dtbo` partition. It is recommanded to keep the stock `dtbo` or the `dtbo` from your third-party rom (If the builder comfirmed it works well). Since there are some problems with the `dtbo.img` which built from this source, one of them is the screen will suddently goes to the highest brightness when shut try to shut off the screen in the lock screen. If you had flashed any other third-party kernels, and you got some weird problem, you should keep an eye to check your `dtbo` has been replaced or not. 
 
-该repo fork自https://github.com/UtsavBalar1231/kernel_xiaomi_sm8250，感谢[@UtsavBalar1231](https://github.com/UtsavBalar1231/)！
+该repo fork自 https://github.com/UtsavBalar1231/kernel_xiaomi_sm8250 ，感谢 [@UtsavBalar1231](https://github.com/UtsavBalar1231/)！
 
 
 主要目的是想修复[电量卡在1%的问题](https://github.com/liyafe1997/Xiaomi-fix-battery-one-percent)，以及defconfig有一些小的改动和优化，以及提供带KernelSU的预编译好的内核（原作的没提供有KernelSU，而且原作release里的lmi内核在我的K30Pro上无法启动，所以就想着自己编译了）。以及再提供一个更直观和易用的编译脚本和README，方便大家自己折腾和修改，编译自己的内核。
