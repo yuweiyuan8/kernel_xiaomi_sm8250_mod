@@ -3,6 +3,10 @@ This repo is forked from https://github.com/UtsavBalar1231/kernel_xiaomi_sm8250.
 
 The main purpose is fix [this battery stuck at 1% problem](https://github.com/liyafe1997/Xiaomi-fix-battery-one-percent), and some small changes and optimizations of defconfig. Also provide KernelSU integrated pre-built image(flashable anykernel3 zip), and a more intuitive and easy-to-use build script and build guide that allow you to try to build by yourself. 
 
+该repo fork自https://github.com/UtsavBalar1231/kernel_xiaomi_sm8250，感谢[@UtsavBalar1231](https://github.com/UtsavBalar1231/)！
+
+主要目的是想修复[电量卡在1%的问题](https://github.com/liyafe1997/Xiaomi-fix-battery-one-percent)，以及defconfig有一些小的改动和优化，以及提供带KernelSU的预编译好的内核（原作的没提供有KernelSU，而且原作release里的lmi内核在我的K30Pro上无法启动，所以就想着自己编译了）。以及再提供一个更直观和易用的编译脚本和README，方便大家自己折腾和修改，编译自己的内核。
+
 # How to build
 1. Prepair basic build environment. 
     You have to have the basic common toolchains, like `git`, `make`, `curl`, etc. 
