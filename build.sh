@@ -5,6 +5,8 @@
 # Ensure the script exits on error
 set -e
 
+TOOLCHAIN_PATH=$HOME/proton-clang/proton-clang-20210522/bin
+
 TARGET_DEVICE=$1
 
 if [ -z "$1" ]; then
@@ -18,8 +20,24 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-if ! command -v aarch64-linux-android-ld >/dev/null 2>&1; then
-    echo "[aarch64-linux-android-ld] does not exist, please check your environment."
+
+
+if [ ! -d $TOOLCHAIN_PATH ]; then
+    echo "TOOLCHAIN_PATH [$TOOLCHAIN_PATH] does not exist."
+    echo "Please ensure the toolchain is there, or change TOOLCHAIN_PATH in the script to your toolchain path."
+    exit 1
+fi
+
+echo "TOOLCHAIN_PATH: [$TOOLCHAIN_PATH]"
+export PATH="$TOOLCHAIN_PATH:$PATH"
+
+if ! command -v aarch64-linux-gnu-ld >/dev/null 2>&1; then
+    echo "[aarch64-linux-gnu-ld] does not exist, please check your environment."
+    exit 1
+fi
+
+if ! command -v arm-linux-gnueabi-ld >/dev/null 2>&1; then
+    echo "[arm-linux-gnueabi-ld] does not exist, please check your environment."
     exit 1
 fi
 
@@ -28,6 +46,13 @@ if ! command -v clang >/dev/null 2>&1; then
     exit 1
 fi
 
+
+# Enable ccache for speed up compiling 
+export CCACHE_DIR="$HOME/.cache/ccache_mikernel" 
+export CC="ccache gcc"
+export CXX="ccache g++"
+export PATH="/usr/lib/ccache:$PATH"
+echo "CCACHE_DIR: [$CCACHE_DIR]"
 
 if [ ! -f "arch/arm64/configs/${TARGET_DEVICE}_defconfig" ]; then
     echo "No target device [${TARGET_DEVICE}] found."
@@ -38,6 +63,7 @@ fi
 
 
 # Check clang is existing.
+echo "[clang --version]:"
 clang --version
 
 
@@ -61,7 +87,7 @@ else
 fi
 
 
-MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-android- CROSS_COMPILE_ARM32=arm-linux-androideabi- CLANG_TRIPLE=aarch64-linux-gnu-"
+MAKE_ARGS="ARCH=arm64 SUBARCH=arm64 O=out CC=clang CROSS_COMPILE=aarch64-linux-gnu- CROSS_COMPILE_ARM32=arm-linux-gnueabi- CROSS_COMPILE_COMPAT=arm-linux-gnueabi- CLANG_TRIPLE=aarch64-linux-gnu-"
 
 
 echo "Cleaning..."
@@ -96,18 +122,23 @@ fi
 echo "Generating [out/arch/arm64/boot/dtb]......"
 find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
 
+rm -rf anykernel/kernels/
 
-rm -rf anykernel/kernels/miui
-rm -rf anykernel/kernels/aosp
-rm -rf anykernel/kernels/aospa
+mkdir -p anykernel/kernels/
 
-mkdir -p anykernel/kernels/aosp
-mkdir -p anykernel/kernels/aospa
+cp out/arch/arm64/boot/Image anykernel/kernels/
+cp out/arch/arm64/boot/dtb anykernel/kernels/
 
-cp out/arch/arm64/boot/Image anykernel/kernels/aosp
-cp out/arch/arm64/boot/dtb anykernel/kernels/aosp
-cp out/arch/arm64/boot/Image anykernel/kernels/aospa
-cp out/arch/arm64/boot/dtb anykernel/kernels/aospa
+cd anykernel 
+
+ZIP_FILENAME=Kernel_AOSP_${TARGET_DEVICE}_${KSU_ZIP_STR}_$(date +'%Y%m%d_%H%M%S')_anykernel3.zip
+
+zip -r9 $ZIP_FILENAME ./* -x .git .gitignore out/ ./*.zip
+
+mv $ZIP_FILENAME ../
+
+cd ..
+
 
 echo "Build for AOSP finished."
 
@@ -191,12 +222,9 @@ fi
 
 scripts/config --file out/.config \
     --set-str STATIC_USERMODEHELPER_PATH /system/bin/micd \
-    -e ARM_ARCH_TIMER_VCT_ACCESS \
-    -e F2FS_UNFAIR_RWSEM	\
     -e PERF_CRITICAL_RT_TASK	\
     -e SF_BINDER		\
     -e OVERLAY_FS		\
-    -d UNICODE				\
     -d DEBUG_FS \
     -e MIGT \
     -e MIGT_ENERGY_MODEL \
@@ -206,16 +234,16 @@ scripts/config --file out/.config \
     -e KPERFEVENTS \
     -e MILLET \
     -e PERF_HUMANTASK \
-    -d OSSFOD \
     -d LTO_CLANG \
     -d LOCALVERSION_AUTO \
-    -d TOUCHSCREEN_COMMON \
     -e SF_BINDER \
+    -e XIAOMI_MIUI \
     -d MI_MEMORY_SYSFS \
     -e TASK_DELAY_ACCT \
     -e MIUI_ZRAM_MEMORY_TRACKING \
     -d CONFIG_MODULE_SIG_SHA512 \
     -d CONFIG_MODULE_SIG_HASH \
+    -e MI_FRAGMENTION \
 
 make $MAKE_ARGS -j$(nproc)
 
@@ -228,18 +256,19 @@ else
     exit 1
 fi
 
-
 echo "Generating [out/arch/arm64/boot/dtb]......"
 find out/arch/arm64/boot/dts -name '*.dtb' -exec cat {} + >out/arch/arm64/boot/dtb
+
 
 # Restore modified dts
 rm -rf ${dts_source}
 mv .dts.bak ${dts_source}
 
+rm -rf anykernel/kernels/
+mkdir -p anykernel/kernels/
 
-mkdir -p anykernel/kernels/miui
-cp out/arch/arm64/boot/Image anykernel/kernels/miui
-cp out/arch/arm64/boot/dtb anykernel/kernels/miui
+cp out/arch/arm64/boot/Image anykernel/kernels/
+cp out/arch/arm64/boot/dtb anykernel/kernels/
 
 echo "Build for MIUI finished."
 # ------------- End of Building for MIUI -------------
@@ -248,7 +277,7 @@ echo "Build for MIUI finished."
 
 cd anykernel 
 
-ZIP_FILENAME=Kernel_${TARGET_DEVICE}_${KSU_ZIP_STR}_$(date +'%Y%m%d_%H%M%S')_anykernel3.zip
+ZIP_FILENAME=Kernel_MIUI_${TARGET_DEVICE}_${KSU_ZIP_STR}_$(date +'%Y%m%d_%H%M%S')_anykernel3.zip
 
 zip -r9 $ZIP_FILENAME ./* -x .git .gitignore out/ ./*.zip
 
