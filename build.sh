@@ -63,6 +63,10 @@ if [ "$1" == "j1" ]; then
     exit
 fi
 
+if [ "$1" == "continue" ]; then
+    make $MAKE_ARGS -j$(nproc)
+    exit
+fi
 
 if [ ! -f "arch/arm64/configs/${TARGET_DEVICE}_defconfig" ]; then
     echo "No target device [${TARGET_DEVICE}] found."
