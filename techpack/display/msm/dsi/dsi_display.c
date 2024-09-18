@@ -1110,6 +1110,8 @@ int dsi_display_set_power(struct drm_connector *connector,
 	struct dsi_panel_mi_cfg *mi_cfg;
 	int rc = 0;
 	struct mi_drm_notifier notify_data;
+
+	#if 0 // Only be used for debugging and LOG be disabled
 	const char *sde_power_mode_str[] = {
 		[SDE_MODE_DPMS_ON] = "SDE_MODE_DPMS_ON",
 		[SDE_MODE_DPMS_LP1] = "SDE_MODE_DPMS_LP1",
@@ -1118,6 +1120,7 @@ int dsi_display_set_power(struct drm_connector *connector,
 		[SDE_MODE_DPMS_SUSPEND] = "SDE_MODE_DPMS_SUSPEND",
 		[SDE_MODE_DPMS_OFF] = "SDE_MODE_DPMS_OFF",
 	};
+	#endif 
 
 	if (!display || !display->panel) {
 		DSI_ERR("invalid display/panel\n");
