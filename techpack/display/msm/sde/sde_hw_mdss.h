@@ -85,11 +85,11 @@ enum sde_format_flags {
 #define SDE_VSYNC_SOURCE_INTF_1		4
 #define SDE_VSYNC_SOURCE_INTF_2		5
 #define SDE_VSYNC_SOURCE_INTF_3		6
-#define SDE_VSYNC_SOURCE_WD_TIMER_4	11
-#define SDE_VSYNC_SOURCE_WD_TIMER_3	12
-#define SDE_VSYNC_SOURCE_WD_TIMER_2	13
-#define SDE_VSYNC_SOURCE_WD_TIMER_1	14
-#define SDE_VSYNC_SOURCE_WD_TIMER_0	15
+#define SDE_VSYNC_SOURCE_WD_TIMER_4	0x11
+#define SDE_VSYNC_SOURCE_WD_TIMER_3	0x12
+#define SDE_VSYNC_SOURCE_WD_TIMER_2	0x13
+#define SDE_VSYNC_SOURCE_WD_TIMER_1	0x14
+#define SDE_VSYNC_SOURCE_WD_TIMER_0	0x15
 
 enum sde_hw_blk_type {
 	SDE_HW_BLK_TOP = 0,
@@ -169,6 +169,7 @@ enum sde_stage {
 	SDE_STAGE_8,
 	SDE_STAGE_9,
 	SDE_STAGE_10,
+	SDE_STAGE_11,
 	SDE_STAGE_MAX
 };
 
@@ -552,8 +553,6 @@ struct sde_hw_cp_cfg {
 	u32 displayh;
 	struct sde_hw_dspp *dspp[DSPP_MAX];
 	bool broadcast_disabled;
-	u32 mi_dimlayer_type;
-	void *payload_clear;
 };
 
 /**
