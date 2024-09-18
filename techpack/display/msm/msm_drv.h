@@ -73,6 +73,9 @@ struct msm_gem_vma;
 
 #define TEARDOWN_DEADLOCK_RETRY_MAX 5
 
+extern atomic_t resume_pending;
+extern wait_queue_head_t resume_wait_q;
+
 struct msm_file_private {
 	rwlock_t queuelock;
 	struct list_head submitqueues;
@@ -107,7 +110,6 @@ enum msm_mdp_plane_property {
 
 	/* range properties */
 	PLANE_PROP_ZPOS = PLANE_PROP_BLOBCOUNT,
-	PLANE_PROP_FOD,
 	PLANE_PROP_ALPHA,
 	PLANE_PROP_COLOR_FILL,
 	PLANE_PROP_H_DECIMATE,
@@ -168,9 +170,6 @@ enum msm_mdp_crtc_property {
 	CRTC_PROP_IDLE_PC_STATE,
 	CRCT_PROP_MI_FOD_SYNC_INFO,
 
-#ifdef CONFIG_DRM_SDE_EXPO
-	CRTC_PROP_DIM_LAYER_EXPO,
-#endif
 	/* total # of properties */
 	CRTC_PROP_COUNT
 };
@@ -424,6 +423,7 @@ struct msm_display_dsc_info {
 
 	u32 extra_width;
 	u32 pps_delay_ms;
+	u64 panel_id;
 };
 
 /**
@@ -656,8 +656,6 @@ struct msm_drm_private {
 
 	struct task_struct *pp_event_thread;
 	struct kthread_worker pp_event_worker;
-
-	struct kthread_work thread_priority_work;
 
 	unsigned int num_encoders;
 	struct drm_encoder *encoders[MAX_ENCODERS];
