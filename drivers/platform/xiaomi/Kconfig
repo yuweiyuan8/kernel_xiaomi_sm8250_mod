@@ -57,6 +57,12 @@ menu "Xiaomi board selection"
 		help
 		  Support for Xiaomi Pad 5 Pro 5G
 
+	config MACH_XIAOMI_PIPA
+		bool "Xiaomi pipa board"
+		select MACH_XIAOMI_SM8250
+		help
+		  Support for Xiaomi Pad 6
+
 	config MACH_XIAOMI_LMI
 		bool "Xiaomi lmi board"
 		select MACH_XIAOMI_SM8250
