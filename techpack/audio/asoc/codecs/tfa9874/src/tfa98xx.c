@@ -3189,7 +3189,7 @@ static int tfa98xx_mute(struct snd_soc_dai *dai, int mute, int stream)
 			tfa98xx_send_mute_cmd(TFA_KCONTROL_VALUE_ENABLED);
 			msleep(60);
 		}
-else
+#else
 		tfa98xx_send_mute_cmd(TFA_KCONTROL_VALUE_ENABLED);
 		msleep(60);
 #endif
