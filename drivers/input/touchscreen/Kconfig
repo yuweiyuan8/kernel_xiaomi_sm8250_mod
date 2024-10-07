@@ -1375,7 +1375,6 @@ config SECURE_TOUCH
 	  If unsure, say N.
 
 source "drivers/input/touchscreen/focaltech_3658u/Kconfig"
-source "drivers/input/touchscreen/focaltech_touch_mi/Kconfig"
 source "drivers/input/touchscreen/focaltech_spi/Kconfig"
 source "drivers/input/touchscreen/fts_521/Kconfig"
 source "drivers/input/touchscreen/fts_spi/Kconfig"
