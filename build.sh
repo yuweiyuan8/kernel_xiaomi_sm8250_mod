@@ -255,6 +255,7 @@ scripts/config --file out/.config \
     -d CONFIG_MODULE_SIG_SHA512 \
     -d CONFIG_MODULE_SIG_HASH \
     -e MI_FRAGMENTION \
+    -e PERF_HELPER \
 
 make $MAKE_ARGS -j$(nproc)
 
