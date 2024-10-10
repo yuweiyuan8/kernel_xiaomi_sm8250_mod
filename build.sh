@@ -262,6 +262,7 @@ scripts/config --file out/.config \
     -d CONFIG_MODULE_SIG_HASH \
     -e MI_FRAGMENTION \
     -e PERF_HELPER \
+    -e BOOTUP_RECLAIM \
 
 make $MAKE_ARGS -j$(nproc)
 
