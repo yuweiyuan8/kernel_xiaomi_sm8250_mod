@@ -48,6 +48,8 @@ Release里的编译好的内核成品由`android14-lineage21-mod`分支编译，
 
 度盘备用下载链接：https://pan.baidu.com/share/init?surl=11ocz7ggZ79gzRfWvsdbJA&pwd=ty58 （建议优先从Github Release下载）
 
+欢迎加入内测QQ群: 459094061
+
 支持的设备:
 | 设备代号  | 设备名称                           |
 |-----------|----------------------------------|
