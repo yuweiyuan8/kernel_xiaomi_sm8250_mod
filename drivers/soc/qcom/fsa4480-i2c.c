@@ -364,7 +364,7 @@ static int fsa4480_probe(struct i2c_client *i2c,
 {
 	struct fsa4480_priv *fsa_priv;
 	int rc = 0;
-#ifdef CONFIG_TARGET_PRODUCT_MUNCH
+#ifdef CONFIG_MACH_XIAOMI_MUNCH
 	union power_supply_propval mode;
 #endif
 	fsa_priv = devm_kzalloc(&i2c->dev, sizeof(*fsa_priv),
