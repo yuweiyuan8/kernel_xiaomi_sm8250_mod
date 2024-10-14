@@ -263,6 +263,7 @@ scripts/config --file out/.config \
     -e MI_FRAGMENTION \
     -e PERF_HELPER \
     -e BOOTUP_RECLAIM \
+    -e MI_RECLAIM \
 
 make $MAKE_ARGS -j$(nproc)
 
