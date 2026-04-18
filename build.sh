@@ -297,7 +297,6 @@ scripts/config --file out/.config \
     -e BINDER_OPT \
     -e KPERFEVENTS \
     -e MILLET \
-    -e PERF_HUMANTASK \
     -d LTO_CLANG \
     -d LOCALVERSION_AUTO \
     -e SF_BINDER \
